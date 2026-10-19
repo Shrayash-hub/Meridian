@@ -1,0 +1,42 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Test and type-check caches
+.pytest_cache/
+.mypy_cache/
+
+# Build artifacts
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+.venv/
+venv/
+
+# Vector index files (FAISS / Chroma / pkl)
+*.faiss
+*.pkl
+*.index
+codebase_index/
+chroma_db/
+
+# Patcher backup files
+*.bak
+
+# Sandbox / generated output
+sandbox/
+
+# OS metadata
+.DS_Store
+
+# Logs
+*.log
