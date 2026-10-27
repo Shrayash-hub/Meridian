@@ -155,7 +155,7 @@ def _make_gemini(key_env: str = "GOOGLE_API_KEY") -> ChatGoogleGenerativeAI | No
         logger.warning("GOOGLE_API_KEY not set — Gemini provider unavailable")
         return None
     return ChatGoogleGenerativeAI(
-        model="gemini-3.8-flash",
+        model="gemini-2.0-flash",
         google_api_key=key,
         max_retries=0,  # Don't retry — FallbackChain handles fallback
     )

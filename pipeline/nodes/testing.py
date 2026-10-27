@@ -48,14 +48,15 @@ Do NOT use any other field names.
 Respond with a valid JSON object that strictly follows the provided schema.
 
 FastAPI HTTP 400 vs 422 — mandatory rule:
-If a test fails with "assert 422 == 400" or "assert 400 == 422":
-  - Do NOT change the test assertion to expect 422 — that ignores the requirement.
-  - Do NOT add a RequestValidationError exception handler — that is a Pydantic workaround.
-  - The correct fix is in the implementation file: remove any Pydantic field validators,
-    EmailStr, or format-validating types from the request model. Declare the field as
-    plain `str`, then validate manually in the route handler using re.match, and raise
-    HTTPException(status_code=400, detail="...") directly.
-  - The test asserting 400 is correct. The implementation returning 422 is wrong.
+FastAPI returns HTTP 422 by default for Pydantic validation failures.
+If a test asserts status_code == 400 and the implementation returns 422,
+the fix is always in the IMPLEMENTATION file, never in the test file.
+  - Declare the field as plain `str` in the Pydantic request model (not EmailStr,
+    not any format-validating type).
+  - Validate the field manually inside the route handler using re.match.
+  - Raise HTTPException(status_code=400, detail="...") when validation fails.
+  - Do NOT change test assertions. Do NOT add RequestValidationError handlers.
+  - Do NOT use Pydantic @field_validator or EmailStr — they produce 422, not 400.
 
 CRITICAL CONSTRAINT: Only return files that already exist in the input. Do NOT create new files, new modules, or new helper files. Fix the existing file in-place. One input file → one output file with the same file_path.
 """

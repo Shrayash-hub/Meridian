@@ -32,7 +32,6 @@ from pipeline.state import (
     PipelineState,
 )
 from pipeline.models import review_model
-import time
 
 logger = logging.getLogger(__name__)
 
@@ -194,8 +193,7 @@ def security_review_node(state: ReviewAgentState) -> dict:
     Reads:  state["code_changes"], state["requirements_spec"]
     Writes: state["review_findings_raw"] (appends findings list)
     """
-    time.sleep(10)  # rate-limit guard: stagger parallel reviewer calls
-    time.sleep(15)
+    time.sleep(15)  # free-tier RPM guard — security reviewer fires first (no extra stagger)
     code_changes = state.get("code_changes") or []
     spec = state.get("requirements_spec")
     reviewer_type = state.get("reviewer_type", "security")
@@ -276,8 +274,7 @@ def performance_review_node(state: ReviewAgentState) -> dict:
     Reads:  state["code_changes"], state["requirements_spec"]
     Writes: state["review_findings_raw"] (appends findings list)
     """
-    time.sleep(10)  # rate-limit guard: stagger parallel reviewer calls
-    time.sleep(15)
+    time.sleep(15)  # free-tier RPM guard — performance reviewer stagger added before LLM call
     code_changes = state.get("code_changes") or []
     spec = state.get("requirements_spec")
     reviewer_type = state.get("reviewer_type", "performance")
@@ -359,8 +356,7 @@ def quality_review_node(state: ReviewAgentState) -> dict:
     Reads:  state["code_changes"], state["requirements_spec"]
     Writes: state["review_findings_raw"] (appends findings list)
     """
-    time.sleep(10)  # rate-limit guard: stagger parallel reviewer calls
-    time.sleep(15)
+    time.sleep(15)  # free-tier RPM guard — quality reviewer stagger added before LLM call
     code_changes = state.get("code_changes") or []
     spec = state.get("requirements_spec")
     reviewer_type = state.get("reviewer_type", "quality")

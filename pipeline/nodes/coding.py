@@ -26,7 +26,6 @@ from pipeline.state import (
     CodeChange,
 )
 from pipeline.models import coding_model
-import time
 logger = logging.getLogger(__name__)
 
 
@@ -113,22 +112,11 @@ issue acceptance criteria says "return HTTP 400" for a validation error.
 
 
 def coding_node(state: CodingAgentState) -> dict:
-    # Guard against empty state slice from empty task list
-    if not state.get("task"):
-        logger.warning("coding_node called with no task, skipping")
-        return {"code_changes": []}
-    time.sleep(15)
-
-    # Brief pause to avoid Groq free-tier rate limits when pipeline
-    # stages fire in rapid succession.
-    # ponytail: remove this when switching to a paid tier or
-    # a provider without per-minute token limits.
-    # time.sleep(5)
     """
     Stage 3: Coding Agent (Worker Node).
 
     Receives one Task via Send API and generates complete file content
-    for that task. Runs in parallel with other coding_node instances —
+    for that task. Runs in parallel with other coding_node instances --
     one instance per task produced by the Architecture Agent.
 
     Writes complete file content, not diffs. Each instance owns exactly
@@ -138,6 +126,11 @@ def coding_node(state: CodingAgentState) -> dict:
     Reads:  state["task"], state["requirements_spec"]
     Writes: state["code_changes"] (appends one CodeChange)
     """
+    # Guard against empty state slice from empty task list
+    if not state.get("task"):
+        logger.warning("coding_node called with no task, skipping")
+        return {"code_changes": []}
+    time.sleep(15)
     task = state["task"]
     spec = state.get("requirements_spec")
 
